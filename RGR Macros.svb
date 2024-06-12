@@ -1,0 +1,1173 @@
+'#Reference {C9E2903F-3D45-11D4-9FF4-00C04FA0D540}#1.0#0#
+'#Reference {C9E29005-3D45-11D4-9FF4-00C04FA0D540}#1.0#0#
+'#Reference {BE35B7EB-0D00-44D8-B3A5-0727DF5AD7C1}#1.0#0#
+'#Reference {C9E29001-3D45-11D4-9FF4-00C04FA0D540}#1.0#0#
+'#Language "WWB-COM"
+Option Base 1
+Sub Main
+	' Макрос записан 6/12/2024 1:47:32 PM
+	Dim AO As AnalysisOutput
+	Dim AWB As Workbook
+
+	Dim S1 As Spreadsheet
+	Set S1 = ActiveDataSet
+
+	Dim newanalysis2 As Analysis
+	Set newanalysis2 = Analysis (scClusterAnalysis, S1)
+	Dim oStaDocs2 As StaDocuments
+
+	Dim oAD1 As STACluster.CluStartup
+	Set oAD1 = newanalysis2.Dialog
+	oAD1.ClusterMethod = scCluJoining
+
+	newanalysis2.Run 
+
+	Dim oAD2 As STACluster.CluJoiningSpecifications
+	Set oAD2 = newanalysis2.Dialog
+	oAD2.InputFileType = scCluRawData
+	oAD2.CasesOrVariables = scCluVariables
+	oAD2.Variables = "1-11"
+	oAD2.AmalgamationRule = scCluSingle
+	oAD2.DistanceMeasure = scCluEuclidean
+	oAD2.CasewiseDeletionOfMD = True
+	oAD2.BatchProcessingAndPrinting = False
+
+	newanalysis2.Run 
+
+	Dim oAD3 As STACluster.CluJoiningResults
+	Set oAD3 = newanalysis2.Dialog
+	oAD3.RectangularBranches = True
+	oAD3.ScaleTreeToDlinkDmax100 = False
+
+	Set oStaDocs2 = oAD3.VerticalIciclePlot
+	Set AO = newanalysis2.RouteOutput(oStaDocs2)
+	AO.Visible = True
+	If AO.HasWorkbook Then
+		Set AWB = AO.Workbook
+	Else
+		Set AWB = Nothing
+	End If
+	Set oStaDocs2 = Nothing
+
+	Dim newanalysis3 As Analysis
+	Set newanalysis3 = Analysis (scSANN, S1)
+	Dim oStaDocs3 As StaDocuments
+
+	Dim oAD4 As STASANN.SANNAnalysisType
+	Set oAD4 = newanalysis3.Dialog
+	oAD4.NewAnalysis = True
+	oAD4.TypeOfAnalysis = scSANNClassification
+
+	newanalysis3.Run 
+
+	Dim oAD5 As STASANN.SANNDataSelection
+	Set oAD5 = newanalysis3.Dialog
+	oAD5.Variables = "11 | 1-10"
+	oAD5.CasewiseDeletionOfMD = True
+	oAD5.UseRandomSampling = True
+	oAD5.SizeOfTrainingSample = 70
+	oAD5.SizeOfTestSample = 15
+	oAD5.SizeOfValidationSample = 15
+	oAD5.SamplingSeed = 1000
+	oAD5.UseRandomSubsampling = True
+	oAD5.SizeOfTrainingSubsample = 70
+	oAD5.SizeOfTestSubsample = 15
+	oAD5.SizeOfValidationSubsample = 15
+	oAD5.NumberOfSubsamples = 2
+	oAD5.SubsamplingSeed = 1000
+	oAD5.AutomaticNetworkSearch = True
+	oAD5.TrainSample = "off"
+	oAD5.TestSample = "off"
+	oAD5.ValidationSample = "off"
+
+	newanalysis3.Run 
+
+	Dim oAD6 As STASANN.SANNAutomaticNetworkSearch
+	Set oAD6 = newanalysis3.Dialog
+	oAD6.UseMLPNetwork = True
+	oAD6.UseRBFNetwork = True
+	oAD6.UseSOSError = True
+	oAD6.UseEntropyError = True
+	oAD6.IdentityHiddenActivationFunction = True
+	oAD6.SigmoidHiddenActivationFunction = True
+	oAD6.TanhHiddenActivationFunction = True
+	oAD6.ExpHiddenActivationFunction = True
+	oAD6.SineHiddenActivationFunction = False
+	oAD6.IdentityOutputActivationFunction = True
+	oAD6.SigmoidOutputActivationFunction = True
+	oAD6.TanhOutputActivationFunction = True
+	oAD6.ExpOutputActivationFunction = True
+	oAD6.SineOutputActivationFunction = False
+	oAD6.MinimumNumberOfHiddenUnits = 4
+	oAD6.MaximumNumberOfHiddenUnits = 13
+	oAD6.MinimumNumberOfHiddenUnitsRBF = 14
+	oAD6.MaximumNumberOfHiddenUnitsRBF = 19
+	oAD6.UseHiddenWeightDecay = False
+	oAD6.UseOutputWeightDecay = False
+	oAD6.NumberOfNetworksToTrain = 10
+	oAD6.NumberOfNetworksToRetain = 5
+	oAD6.UseFixedSeedForNetworkInitialization = False
+
+	newanalysis3.Run 
+
+	Dim oAD7 As STASANN.SANNResults
+	Set oAD7 = newanalysis3.Dialog
+	oAD7.ActivateModels = "1-5 "
+	oAD7.ModelListView = "1 2 3 4 5 "
+	oAD7.UseTrainingSample = True
+	oAD7.UseTestSample = False
+	oAD7.UseValidationSample = False
+	oAD7.StandaloneNetworks = True
+	oAD7.IncludeInputs = False
+	oAD7.IncludeTargets = True
+	oAD7.IncludePredictions = True
+	oAD7.IncludeErrorbars = False
+	oAD7.IncludeResiduals = False
+	oAD7.SelectedItemX = "1"
+	oAD7.SelectedItemY = "2"
+	oAD7.SelectedItemZ = "none"
+	oAD7.IncludeCaseNames = False
+	oAD7.GainLiftchart = True
+	oAD7.SelectCategory = "1"
+	oAD7.CumulativeLiftchart = False
+	oAD7.NumberOfCustomPredictions = 1
+	oAD7.ClearCustomPredictions = False
+
+	Set oStaDocs3 = oAD7.SummaryOfNetworks
+	Set AO = newanalysis3.RouteOutput(oStaDocs3)
+	AO.Visible = True
+	If AO.HasWorkbook Then
+		Set AWB = AO.Workbook
+	Else
+		Set AWB = Nothing
+	End If
+	Set oStaDocs3 = Nothing
+
+	Dim newanalysis4 As Analysis
+	Set newanalysis4 = Analysis (scSANN, S1)
+	Dim oStaDocs4 As StaDocuments
+
+	Dim oAD8 As STASANN.SANNAnalysisType
+	Set oAD8 = newanalysis4.Dialog
+	oAD8.NewAnalysis = True
+	oAD8.TypeOfAnalysis = scSANNClassification
+
+	newanalysis4.Run 
+
+	Dim oAD9 As STASANN.SANNDataSelection
+	Set oAD9 = newanalysis4.Dialog
+	oAD9.Variables = "11 | 2-10"
+	oAD9.CasewiseDeletionOfMD = True
+	oAD9.UseRandomSampling = True
+	oAD9.SizeOfTrainingSample = 70
+	oAD9.SizeOfTestSample = 15
+	oAD9.SizeOfValidationSample = 15
+	oAD9.SamplingSeed = 1000
+	oAD9.UseRandomSubsampling = True
+	oAD9.SizeOfTrainingSubsample = 70
+	oAD9.SizeOfTestSubsample = 15
+	oAD9.SizeOfValidationSubsample = 15
+	oAD9.NumberOfSubsamples = 2
+	oAD9.SubsamplingSeed = 1000
+	oAD9.AutomaticNetworkSearch = True
+	oAD9.TrainSample = "off"
+	oAD9.TestSample = "off"
+	oAD9.ValidationSample = "off"
+
+	newanalysis4.Run 
+
+	Dim oAD10 As STASANN.SANNAutomaticNetworkSearch
+	Set oAD10 = newanalysis4.Dialog
+	oAD10.UseMLPNetwork = True
+	oAD10.UseRBFNetwork = True
+	oAD10.UseSOSError = True
+	oAD10.UseEntropyError = True
+	oAD10.IdentityHiddenActivationFunction = True
+	oAD10.SigmoidHiddenActivationFunction = True
+	oAD10.TanhHiddenActivationFunction = True
+	oAD10.ExpHiddenActivationFunction = True
+	oAD10.SineHiddenActivationFunction = False
+	oAD10.IdentityOutputActivationFunction = True
+	oAD10.SigmoidOutputActivationFunction = True
+	oAD10.TanhOutputActivationFunction = True
+	oAD10.ExpOutputActivationFunction = True
+	oAD10.SineOutputActivationFunction = False
+	oAD10.MinimumNumberOfHiddenUnits = 4
+	oAD10.MaximumNumberOfHiddenUnits = 13
+	oAD10.MinimumNumberOfHiddenUnitsRBF = 14
+	oAD10.MaximumNumberOfHiddenUnitsRBF = 19
+	oAD10.UseHiddenWeightDecay = False
+	oAD10.UseOutputWeightDecay = False
+	oAD10.NumberOfNetworksToTrain = 10
+	oAD10.NumberOfNetworksToRetain = 5
+	oAD10.UseFixedSeedForNetworkInitialization = False
+
+	newanalysis4.Run 
+
+	Dim oAD11 As STASANN.SANNResults
+	Set oAD11 = newanalysis4.Dialog
+	oAD11.ActivateModels = "1-5 "
+	oAD11.ModelListView = "1 2 3 4 5 "
+	oAD11.UseTrainingSample = True
+	oAD11.UseTestSample = False
+	oAD11.UseValidationSample = False
+	oAD11.StandaloneNetworks = True
+	oAD11.IncludeInputs = False
+	oAD11.IncludeTargets = True
+	oAD11.IncludePredictions = True
+	oAD11.IncludeErrorbars = False
+	oAD11.IncludeResiduals = False
+	oAD11.IncludeOtherVariables = False
+	oAD11.SelectedItemX = "1"
+	oAD11.SelectedItemY = "2"
+	oAD11.SelectedItemZ = "none"
+	oAD11.IncludeCaseNames = False
+	oAD11.GainLiftchart = True
+	oAD11.SelectCategory = "1"
+	oAD11.CumulativeLiftchart = False
+	oAD11.NumberOfCustomPredictions = 1
+	oAD11.ClearCustomPredictions = False
+
+	Set oStaDocs4 = oAD11.SummaryOfNetworks
+	Set AO = newanalysis4.RouteOutput(oStaDocs4)
+	AO.Visible = True
+	If AO.HasWorkbook Then
+		Set AWB = AO.Workbook
+	Else
+		Set AWB = Nothing
+	End If
+	Set oStaDocs4 = Nothing
+
+	Dim newanalysis5 As Analysis
+	Set newanalysis5 = Analysis (scSANN, S1)
+	Dim oStaDocs5 As StaDocuments
+
+	Dim oAD12 As STASANN.SANNAnalysisType
+	Set oAD12 = newanalysis5.Dialog
+	oAD12.NewAnalysis = True
+	oAD12.TypeOfAnalysis = scSANNClassification
+
+	newanalysis5.Run 
+
+	Dim oAD13 As STASANN.SANNDataSelection
+	Set oAD13 = newanalysis5.Dialog
+	oAD13.Variables = "11 | 3-10 1"
+	oAD13.CasewiseDeletionOfMD = True
+	oAD13.UseRandomSampling = True
+	oAD13.SizeOfTrainingSample = 70
+	oAD13.SizeOfTestSample = 15
+	oAD13.SizeOfValidationSample = 15
+	oAD13.SamplingSeed = 1000
+	oAD13.UseRandomSubsampling = True
+	oAD13.SizeOfTrainingSubsample = 70
+	oAD13.SizeOfTestSubsample = 15
+	oAD13.SizeOfValidationSubsample = 15
+	oAD13.NumberOfSubsamples = 2
+	oAD13.SubsamplingSeed = 1000
+	oAD13.AutomaticNetworkSearch = True
+	oAD13.TrainSample = "off"
+	oAD13.TestSample = "off"
+	oAD13.ValidationSample = "off"
+
+	newanalysis5.Run 
+
+	Dim oAD14 As STASANN.SANNAutomaticNetworkSearch
+	Set oAD14 = newanalysis5.Dialog
+	oAD14.UseMLPNetwork = True
+	oAD14.UseRBFNetwork = True
+	oAD14.UseSOSError = True
+	oAD14.UseEntropyError = True
+	oAD14.IdentityHiddenActivationFunction = True
+	oAD14.SigmoidHiddenActivationFunction = True
+	oAD14.TanhHiddenActivationFunction = True
+	oAD14.ExpHiddenActivationFunction = True
+	oAD14.SineHiddenActivationFunction = False
+	oAD14.IdentityOutputActivationFunction = True
+	oAD14.SigmoidOutputActivationFunction = True
+	oAD14.TanhOutputActivationFunction = True
+	oAD14.ExpOutputActivationFunction = True
+	oAD14.SineOutputActivationFunction = False
+	oAD14.MinimumNumberOfHiddenUnits = 4
+	oAD14.MaximumNumberOfHiddenUnits = 13
+	oAD14.MinimumNumberOfHiddenUnitsRBF = 14
+	oAD14.MaximumNumberOfHiddenUnitsRBF = 19
+	oAD14.UseHiddenWeightDecay = False
+	oAD14.UseOutputWeightDecay = False
+	oAD14.NumberOfNetworksToTrain = 10
+	oAD14.NumberOfNetworksToRetain = 5
+	oAD14.UseFixedSeedForNetworkInitialization = False
+
+	newanalysis5.Run 
+
+	Dim oAD15 As STASANN.SANNResults
+	Set oAD15 = newanalysis5.Dialog
+	oAD15.ActivateModels = "1-5 "
+	oAD15.ModelListView = "1 2 3 4 5 "
+	oAD15.UseTrainingSample = True
+	oAD15.UseTestSample = False
+	oAD15.UseValidationSample = False
+	oAD15.StandaloneNetworks = True
+	oAD15.IncludeInputs = False
+	oAD15.IncludeTargets = True
+	oAD15.IncludePredictions = True
+	oAD15.IncludeErrorbars = False
+	oAD15.IncludeResiduals = False
+	oAD15.IncludeOtherVariables = False
+	oAD15.SelectedItemX = "1"
+	oAD15.SelectedItemY = "2"
+	oAD15.SelectedItemZ = "none"
+	oAD15.IncludeCaseNames = False
+	oAD15.GainLiftchart = True
+	oAD15.SelectCategory = "1"
+	oAD15.CumulativeLiftchart = False
+	oAD15.NumberOfCustomPredictions = 1
+	oAD15.ClearCustomPredictions = False
+
+	Set oStaDocs5 = oAD15.SummaryOfNetworks
+	Set AO = newanalysis5.RouteOutput(oStaDocs5)
+	AO.Visible = True
+	If AO.HasWorkbook Then
+		Set AWB = AO.Workbook
+	Else
+		Set AWB = Nothing
+	End If
+	Set oStaDocs5 = Nothing
+
+	Dim newanalysis6 As Analysis
+	Set newanalysis6 = Analysis (scSANN, S1)
+	Dim oStaDocs6 As StaDocuments
+
+	Dim oAD16 As STASANN.SANNAnalysisType
+	Set oAD16 = newanalysis6.Dialog
+	oAD16.NewAnalysis = True
+	oAD16.TypeOfAnalysis = scSANNClassification
+
+	newanalysis6.Run 
+
+	Dim oAD17 As STASANN.SANNDataSelection
+	Set oAD17 = newanalysis6.Dialog
+	oAD17.Variables = "11 | 4-10 1-2"
+	oAD17.CasewiseDeletionOfMD = True
+	oAD17.UseRandomSampling = True
+	oAD17.SizeOfTrainingSample = 70
+	oAD17.SizeOfTestSample = 15
+	oAD17.SizeOfValidationSample = 15
+	oAD17.SamplingSeed = 1000
+	oAD17.UseRandomSubsampling = True
+	oAD17.SizeOfTrainingSubsample = 70
+	oAD17.SizeOfTestSubsample = 15
+	oAD17.SizeOfValidationSubsample = 15
+	oAD17.NumberOfSubsamples = 2
+	oAD17.SubsamplingSeed = 1000
+	oAD17.AutomaticNetworkSearch = True
+	oAD17.TrainSample = "off"
+	oAD17.TestSample = "off"
+	oAD17.ValidationSample = "off"
+
+	newanalysis6.Run 
+
+	Dim oAD18 As STASANN.SANNAutomaticNetworkSearch
+	Set oAD18 = newanalysis6.Dialog
+	oAD18.UseMLPNetwork = True
+	oAD18.UseRBFNetwork = True
+	oAD18.UseSOSError = True
+	oAD18.UseEntropyError = True
+	oAD18.IdentityHiddenActivationFunction = True
+	oAD18.SigmoidHiddenActivationFunction = True
+	oAD18.TanhHiddenActivationFunction = True
+	oAD18.ExpHiddenActivationFunction = True
+	oAD18.SineHiddenActivationFunction = False
+	oAD18.IdentityOutputActivationFunction = True
+	oAD18.SigmoidOutputActivationFunction = True
+	oAD18.TanhOutputActivationFunction = True
+	oAD18.ExpOutputActivationFunction = True
+	oAD18.SineOutputActivationFunction = False
+	oAD18.MinimumNumberOfHiddenUnits = 4
+	oAD18.MaximumNumberOfHiddenUnits = 13
+	oAD18.MinimumNumberOfHiddenUnitsRBF = 14
+	oAD18.MaximumNumberOfHiddenUnitsRBF = 19
+	oAD18.UseHiddenWeightDecay = False
+	oAD18.UseOutputWeightDecay = False
+	oAD18.NumberOfNetworksToTrain = 10
+	oAD18.NumberOfNetworksToRetain = 5
+	oAD18.UseFixedSeedForNetworkInitialization = False
+
+	newanalysis6.Run 
+
+	Dim oAD19 As STASANN.SANNResults
+	Set oAD19 = newanalysis6.Dialog
+	oAD19.ActivateModels = "1-5 "
+	oAD19.ModelListView = "1 2 3 4 5 "
+	oAD19.UseTrainingSample = True
+	oAD19.UseTestSample = False
+	oAD19.UseValidationSample = False
+	oAD19.StandaloneNetworks = True
+	oAD19.IncludeInputs = False
+	oAD19.IncludeTargets = True
+	oAD19.IncludePredictions = True
+	oAD19.IncludeErrorbars = False
+	oAD19.IncludeResiduals = False
+	oAD19.IncludeOtherVariables = False
+	oAD19.SelectedItemX = "1"
+	oAD19.SelectedItemY = "2"
+	oAD19.SelectedItemZ = "none"
+	oAD19.IncludeCaseNames = False
+	oAD19.GainLiftchart = True
+	oAD19.SelectCategory = "1"
+	oAD19.CumulativeLiftchart = False
+	oAD19.NumberOfCustomPredictions = 1
+	oAD19.ClearCustomPredictions = False
+
+	Set oStaDocs6 = oAD19.SummaryOfNetworks
+	Set AO = newanalysis6.RouteOutput(oStaDocs6)
+	AO.Visible = True
+	If AO.HasWorkbook Then
+		Set AWB = AO.Workbook
+	Else
+		Set AWB = Nothing
+	End If
+	Set oStaDocs6 = Nothing
+
+	Dim newanalysis7 As Analysis
+	Set newanalysis7 = Analysis (scSANN, S1)
+	Dim oStaDocs7 As StaDocuments
+
+	Dim oAD20 As STASANN.SANNAnalysisType
+	Set oAD20 = newanalysis7.Dialog
+	oAD20.NewAnalysis = True
+	oAD20.TypeOfAnalysis = scSANNClassification
+
+	newanalysis7.Run 
+
+	Dim oAD21 As STASANN.SANNDataSelection
+	Set oAD21 = newanalysis7.Dialog
+	oAD21.Variables = "11 | 5-10 1-3"
+	oAD21.CasewiseDeletionOfMD = True
+	oAD21.UseRandomSampling = True
+	oAD21.SizeOfTrainingSample = 70
+	oAD21.SizeOfTestSample = 15
+	oAD21.SizeOfValidationSample = 15
+	oAD21.SamplingSeed = 1000
+	oAD21.UseRandomSubsampling = True
+	oAD21.SizeOfTrainingSubsample = 70
+	oAD21.SizeOfTestSubsample = 15
+	oAD21.SizeOfValidationSubsample = 15
+	oAD21.NumberOfSubsamples = 2
+	oAD21.SubsamplingSeed = 1000
+	oAD21.AutomaticNetworkSearch = True
+	oAD21.TrainSample = "off"
+	oAD21.TestSample = "off"
+	oAD21.ValidationSample = "off"
+
+	newanalysis7.Run 
+
+	Dim oAD22 As STASANN.SANNAutomaticNetworkSearch
+	Set oAD22 = newanalysis7.Dialog
+	oAD22.UseMLPNetwork = True
+	oAD22.UseRBFNetwork = True
+	oAD22.UseSOSError = True
+	oAD22.UseEntropyError = True
+	oAD22.IdentityHiddenActivationFunction = True
+	oAD22.SigmoidHiddenActivationFunction = True
+	oAD22.TanhHiddenActivationFunction = True
+	oAD22.ExpHiddenActivationFunction = True
+	oAD22.SineHiddenActivationFunction = False
+	oAD22.IdentityOutputActivationFunction = True
+	oAD22.SigmoidOutputActivationFunction = True
+	oAD22.TanhOutputActivationFunction = True
+	oAD22.ExpOutputActivationFunction = True
+	oAD22.SineOutputActivationFunction = False
+	oAD22.MinimumNumberOfHiddenUnits = 4
+	oAD22.MaximumNumberOfHiddenUnits = 13
+	oAD22.MinimumNumberOfHiddenUnitsRBF = 14
+	oAD22.MaximumNumberOfHiddenUnitsRBF = 19
+	oAD22.UseHiddenWeightDecay = False
+	oAD22.UseOutputWeightDecay = False
+	oAD22.NumberOfNetworksToTrain = 10
+	oAD22.NumberOfNetworksToRetain = 5
+	oAD22.UseFixedSeedForNetworkInitialization = False
+
+	newanalysis7.Run 
+
+	Dim oAD23 As STASANN.SANNResults
+	Set oAD23 = newanalysis7.Dialog
+	oAD23.ActivateModels = "1-5 "
+	oAD23.ModelListView = "1 2 3 4 5 "
+	oAD23.UseTrainingSample = True
+	oAD23.UseTestSample = False
+	oAD23.UseValidationSample = False
+	oAD23.StandaloneNetworks = True
+	oAD23.IncludeInputs = False
+	oAD23.IncludeTargets = True
+	oAD23.IncludePredictions = True
+	oAD23.IncludeErrorbars = False
+	oAD23.IncludeResiduals = False
+	oAD23.IncludeOtherVariables = False
+	oAD23.SelectedItemX = "1"
+	oAD23.SelectedItemY = "2"
+	oAD23.SelectedItemZ = "none"
+	oAD23.IncludeCaseNames = False
+	oAD23.GainLiftchart = True
+	oAD23.SelectCategory = "1"
+	oAD23.CumulativeLiftchart = False
+	oAD23.NumberOfCustomPredictions = 1
+	oAD23.ClearCustomPredictions = False
+
+	Set oStaDocs7 = oAD23.SummaryOfNetworks
+	Set AO = newanalysis7.RouteOutput(oStaDocs7)
+	AO.Visible = True
+	If AO.HasWorkbook Then
+		Set AWB = AO.Workbook
+	Else
+		Set AWB = Nothing
+	End If
+	Set oStaDocs7 = Nothing
+
+	Dim newanalysis8 As Analysis
+	Set newanalysis8 = Analysis (scSANN, S1)
+	Dim oStaDocs8 As StaDocuments
+
+	Dim oAD24 As STASANN.SANNAnalysisType
+	Set oAD24 = newanalysis8.Dialog
+	oAD24.NewAnalysis = True
+	oAD24.TypeOfAnalysis = scSANNClassification
+
+	newanalysis8.Run 
+
+	Dim oAD25 As STASANN.SANNDataSelection
+	Set oAD25 = newanalysis8.Dialog
+	oAD25.Variables = "11 | 6-10 4 1-3"
+	oAD25.CasewiseDeletionOfMD = True
+	oAD25.UseRandomSampling = True
+	oAD25.SizeOfTrainingSample = 70
+	oAD25.SizeOfTestSample = 15
+	oAD25.SizeOfValidationSample = 15
+	oAD25.SamplingSeed = 1000
+	oAD25.UseRandomSubsampling = True
+	oAD25.SizeOfTrainingSubsample = 70
+	oAD25.SizeOfTestSubsample = 15
+	oAD25.SizeOfValidationSubsample = 15
+	oAD25.NumberOfSubsamples = 2
+	oAD25.SubsamplingSeed = 1000
+	oAD25.AutomaticNetworkSearch = True
+	oAD25.TrainSample = "off"
+	oAD25.TestSample = "off"
+	oAD25.ValidationSample = "off"
+
+	newanalysis8.Run 
+
+	Dim oAD26 As STASANN.SANNAutomaticNetworkSearch
+	Set oAD26 = newanalysis8.Dialog
+	oAD26.UseMLPNetwork = True
+	oAD26.UseRBFNetwork = True
+	oAD26.UseSOSError = True
+	oAD26.UseEntropyError = True
+	oAD26.IdentityHiddenActivationFunction = True
+	oAD26.SigmoidHiddenActivationFunction = True
+	oAD26.TanhHiddenActivationFunction = True
+	oAD26.ExpHiddenActivationFunction = True
+	oAD26.SineHiddenActivationFunction = False
+	oAD26.IdentityOutputActivationFunction = True
+	oAD26.SigmoidOutputActivationFunction = True
+	oAD26.TanhOutputActivationFunction = True
+	oAD26.ExpOutputActivationFunction = True
+	oAD26.SineOutputActivationFunction = False
+	oAD26.MinimumNumberOfHiddenUnits = 4
+	oAD26.MaximumNumberOfHiddenUnits = 13
+	oAD26.MinimumNumberOfHiddenUnitsRBF = 14
+	oAD26.MaximumNumberOfHiddenUnitsRBF = 19
+	oAD26.UseHiddenWeightDecay = False
+	oAD26.UseOutputWeightDecay = False
+	oAD26.NumberOfNetworksToTrain = 10
+	oAD26.NumberOfNetworksToRetain = 5
+	oAD26.UseFixedSeedForNetworkInitialization = False
+
+	newanalysis8.Run 
+
+	Dim oAD27 As STASANN.SANNResults
+	Set oAD27 = newanalysis8.Dialog
+	oAD27.ActivateModels = "1-5 "
+	oAD27.ModelListView = "1 2 3 4 5 "
+	oAD27.UseTrainingSample = True
+	oAD27.UseTestSample = False
+	oAD27.UseValidationSample = False
+	oAD27.StandaloneNetworks = True
+	oAD27.IncludeInputs = False
+	oAD27.IncludeTargets = True
+	oAD27.IncludePredictions = True
+	oAD27.IncludeErrorbars = False
+	oAD27.IncludeResiduals = False
+	oAD27.IncludeOtherVariables = False
+	oAD27.SelectedItemX = "1"
+	oAD27.SelectedItemY = "2"
+	oAD27.SelectedItemZ = "none"
+	oAD27.IncludeCaseNames = False
+	oAD27.GainLiftchart = True
+	oAD27.SelectCategory = "1"
+	oAD27.CumulativeLiftchart = False
+	oAD27.NumberOfCustomPredictions = 1
+	oAD27.ClearCustomPredictions = False
+
+	Set oStaDocs8 = oAD27.SummaryOfNetworks
+	Set AO = newanalysis8.RouteOutput(oStaDocs8)
+	AO.Visible = True
+	If AO.HasWorkbook Then
+		Set AWB = AO.Workbook
+	Else
+		Set AWB = Nothing
+	End If
+	Set oStaDocs8 = Nothing
+
+	Dim newanalysis9 As Analysis
+	Set newanalysis9 = Analysis (scSANN, S1)
+	Dim oStaDocs9 As StaDocuments
+
+	Dim oAD28 As STASANN.SANNAnalysisType
+	Set oAD28 = newanalysis9.Dialog
+	oAD28.NewAnalysis = True
+	oAD28.TypeOfAnalysis = scSANNTimeseriesRegression
+
+	newanalysis9.Run 
+
+	Dim oAD29 As STASANN.SANNDataSelection
+	Set oAD29 = newanalysis9.Dialog
+	oAD29.UseRandomSampling = True
+	oAD29.SizeOfTrainingSample = 70
+	oAD29.SizeOfTestSample = 15
+	oAD29.SizeOfValidationSample = 15
+	oAD29.SamplingSeed = 1000
+	oAD29.UseRandomSubsampling = True
+	oAD29.SizeOfTrainingSubsample = 70
+	oAD29.SizeOfTestSubsample = 15
+	oAD29.SizeOfValidationSubsample = 15
+	oAD29.NumberOfSubsamples = 2
+	oAD29.SubsamplingSeed = 1000
+	oAD29.AutomaticNetworkSearch = True
+	oAD29.TrainSample = "off"
+	oAD29.TestSample = "off"
+	oAD29.ValidationSample = "off"
+	oAD29.StepsUsedToPredict = 1
+	oAD29.StepsAhead = 1
+
+	newanalysis9.GoBack 
+
+	Dim oAD30 As STASANN.SANNAnalysisType
+	Set oAD30 = newanalysis9.Dialog
+	oAD30.NewAnalysis = True
+	oAD30.TypeOfAnalysis = scSANNClassification
+
+	newanalysis9.Run 
+
+	Dim oAD31 As STASANN.SANNDataSelection
+	Set oAD31 = newanalysis9.Dialog
+	oAD31.Variables = "11 | 1-5 7-10"
+	oAD31.CasewiseDeletionOfMD = True
+	oAD31.UseRandomSampling = True
+	oAD31.SizeOfTrainingSample = 70
+	oAD31.SizeOfTestSample = 15
+	oAD31.SizeOfValidationSample = 15
+	oAD31.SamplingSeed = 1000
+	oAD31.UseRandomSubsampling = True
+	oAD31.SizeOfTrainingSubsample = 70
+	oAD31.SizeOfTestSubsample = 15
+	oAD31.SizeOfValidationSubsample = 15
+	oAD31.NumberOfSubsamples = 2
+	oAD31.SubsamplingSeed = 1000
+	oAD31.AutomaticNetworkSearch = True
+	oAD31.TrainSample = "off"
+	oAD31.TestSample = "off"
+	oAD31.ValidationSample = "off"
+
+	newanalysis9.GoBack 
+
+	Dim oAD32 As STASANN.SANNAnalysisType
+	Set oAD32 = newanalysis9.Dialog
+	oAD32.NewAnalysis = True
+	oAD32.TypeOfAnalysis = scSANNClassification
+
+	newanalysis9.Run 
+
+	Dim oAD33 As STASANN.SANNDataSelection
+	Set oAD33 = newanalysis9.Dialog
+	oAD33.Variables = "11 | 1-5 7-10"
+	oAD33.CasewiseDeletionOfMD = True
+	oAD33.UseRandomSampling = True
+	oAD33.SizeOfTrainingSample = 70
+	oAD33.SizeOfTestSample = 15
+	oAD33.SizeOfValidationSample = 15
+	oAD33.SamplingSeed = 1000
+	oAD33.UseRandomSubsampling = True
+	oAD33.SizeOfTrainingSubsample = 70
+	oAD33.SizeOfTestSubsample = 15
+	oAD33.SizeOfValidationSubsample = 15
+	oAD33.NumberOfSubsamples = 2
+	oAD33.SubsamplingSeed = 1000
+	oAD33.AutomaticNetworkSearch = True
+	oAD33.TrainSample = "off"
+	oAD33.TestSample = "off"
+	oAD33.ValidationSample = "off"
+
+	newanalysis9.Run 
+
+	Dim oAD34 As STASANN.SANNAutomaticNetworkSearch
+	Set oAD34 = newanalysis9.Dialog
+	oAD34.UseMLPNetwork = True
+	oAD34.UseRBFNetwork = True
+	oAD34.UseSOSError = True
+	oAD34.UseEntropyError = True
+	oAD34.IdentityHiddenActivationFunction = True
+	oAD34.SigmoidHiddenActivationFunction = True
+	oAD34.TanhHiddenActivationFunction = True
+	oAD34.ExpHiddenActivationFunction = True
+	oAD34.SineHiddenActivationFunction = False
+	oAD34.IdentityOutputActivationFunction = True
+	oAD34.SigmoidOutputActivationFunction = True
+	oAD34.TanhOutputActivationFunction = True
+	oAD34.ExpOutputActivationFunction = True
+	oAD34.SineOutputActivationFunction = False
+	oAD34.MinimumNumberOfHiddenUnits = 4
+	oAD34.MaximumNumberOfHiddenUnits = 13
+	oAD34.MinimumNumberOfHiddenUnitsRBF = 14
+	oAD34.MaximumNumberOfHiddenUnitsRBF = 19
+	oAD34.UseHiddenWeightDecay = False
+	oAD34.UseOutputWeightDecay = False
+	oAD34.NumberOfNetworksToTrain = 10
+	oAD34.NumberOfNetworksToRetain = 5
+	oAD34.UseFixedSeedForNetworkInitialization = False
+
+	newanalysis9.Run 
+
+	Dim oAD35 As STASANN.SANNResults
+	Set oAD35 = newanalysis9.Dialog
+	oAD35.ActivateModels = "1-5 "
+	oAD35.ModelListView = "1 2 3 4 5 "
+	oAD35.UseTrainingSample = True
+	oAD35.UseTestSample = False
+	oAD35.UseValidationSample = False
+	oAD35.StandaloneNetworks = True
+	oAD35.IncludeInputs = False
+	oAD35.IncludeTargets = True
+	oAD35.IncludePredictions = True
+	oAD35.IncludeErrorbars = False
+	oAD35.IncludeResiduals = False
+	oAD35.IncludeOtherVariables = False
+	oAD35.SelectedItemX = "1"
+	oAD35.SelectedItemY = "2"
+	oAD35.SelectedItemZ = "none"
+	oAD35.IncludeCaseNames = False
+	oAD35.GainLiftchart = True
+	oAD35.SelectCategory = "1"
+	oAD35.CumulativeLiftchart = False
+	oAD35.NumberOfCustomPredictions = 1
+	oAD35.ClearCustomPredictions = False
+
+	Set oStaDocs9 = oAD35.SummaryOfNetworks
+	Set AO = newanalysis9.RouteOutput(oStaDocs9)
+	AO.Visible = True
+	If AO.HasWorkbook Then
+		Set AWB = AO.Workbook
+	Else
+		Set AWB = Nothing
+	End If
+	Set oStaDocs9 = Nothing
+
+	Dim newanalysis10 As Analysis
+	Set newanalysis10 = Analysis (scSANN, S1)
+	Dim oStaDocs10 As StaDocuments
+
+	Dim oAD36 As STASANN.SANNAnalysisType
+	Set oAD36 = newanalysis10.Dialog
+	oAD36.NewAnalysis = True
+	oAD36.TypeOfAnalysis = scSANNClassification
+
+	newanalysis10.Run 
+
+	Dim oAD37 As STASANN.SANNDataSelection
+	Set oAD37 = newanalysis10.Dialog
+	oAD37.Variables = "11 | 1-6 8 10 9"
+	oAD37.CasewiseDeletionOfMD = True
+	oAD37.UseRandomSampling = True
+	oAD37.SizeOfTrainingSample = 70
+	oAD37.SizeOfTestSample = 15
+	oAD37.SizeOfValidationSample = 15
+	oAD37.SamplingSeed = 1000
+	oAD37.UseRandomSubsampling = True
+	oAD37.SizeOfTrainingSubsample = 70
+	oAD37.SizeOfTestSubsample = 15
+	oAD37.SizeOfValidationSubsample = 15
+	oAD37.NumberOfSubsamples = 2
+	oAD37.SubsamplingSeed = 1000
+	oAD37.AutomaticNetworkSearch = True
+	oAD37.TrainSample = "off"
+	oAD37.TestSample = "off"
+	oAD37.ValidationSample = "off"
+
+	newanalysis10.Run 
+
+	Dim oAD38 As STASANN.SANNAutomaticNetworkSearch
+	Set oAD38 = newanalysis10.Dialog
+	oAD38.UseMLPNetwork = True
+	oAD38.UseRBFNetwork = True
+	oAD38.UseSOSError = True
+	oAD38.UseEntropyError = True
+	oAD38.IdentityHiddenActivationFunction = True
+	oAD38.SigmoidHiddenActivationFunction = True
+	oAD38.TanhHiddenActivationFunction = True
+	oAD38.ExpHiddenActivationFunction = True
+	oAD38.SineHiddenActivationFunction = False
+	oAD38.IdentityOutputActivationFunction = True
+	oAD38.SigmoidOutputActivationFunction = True
+	oAD38.TanhOutputActivationFunction = True
+	oAD38.ExpOutputActivationFunction = True
+	oAD38.SineOutputActivationFunction = False
+	oAD38.MinimumNumberOfHiddenUnits = 4
+	oAD38.MaximumNumberOfHiddenUnits = 13
+	oAD38.MinimumNumberOfHiddenUnitsRBF = 14
+	oAD38.MaximumNumberOfHiddenUnitsRBF = 19
+	oAD38.UseHiddenWeightDecay = False
+	oAD38.UseOutputWeightDecay = False
+	oAD38.NumberOfNetworksToTrain = 10
+	oAD38.NumberOfNetworksToRetain = 5
+	oAD38.UseFixedSeedForNetworkInitialization = False
+
+	newanalysis10.Run 
+
+	Dim oAD39 As STASANN.SANNResults
+	Set oAD39 = newanalysis10.Dialog
+	oAD39.ActivateModels = "1-5 "
+	oAD39.ModelListView = "1 2 3 4 5 "
+	oAD39.UseTrainingSample = True
+	oAD39.UseTestSample = False
+	oAD39.UseValidationSample = False
+	oAD39.StandaloneNetworks = True
+	oAD39.IncludeInputs = False
+	oAD39.IncludeTargets = True
+	oAD39.IncludePredictions = True
+	oAD39.IncludeErrorbars = False
+	oAD39.IncludeResiduals = False
+	oAD39.IncludeOtherVariables = False
+	oAD39.SelectedItemX = "1"
+	oAD39.SelectedItemY = "2"
+	oAD39.SelectedItemZ = "none"
+	oAD39.IncludeCaseNames = False
+	oAD39.GainLiftchart = True
+	oAD39.SelectCategory = "1"
+	oAD39.CumulativeLiftchart = False
+	oAD39.NumberOfCustomPredictions = 1
+	oAD39.ClearCustomPredictions = False
+
+	Set oStaDocs10 = oAD39.SummaryOfNetworks
+	Set AO = newanalysis10.RouteOutput(oStaDocs10)
+	AO.Visible = True
+	If AO.HasWorkbook Then
+		Set AWB = AO.Workbook
+	Else
+		Set AWB = Nothing
+	End If
+	Set oStaDocs10 = Nothing
+
+	Dim newanalysis11 As Analysis
+	Set newanalysis11 = Analysis (scSANN, S1)
+	Dim oStaDocs11 As StaDocuments
+
+	Dim oAD40 As STASANN.SANNAnalysisType
+	Set oAD40 = newanalysis11.Dialog
+	oAD40.NewAnalysis = True
+	oAD40.TypeOfAnalysis = scSANNClassification
+
+	newanalysis11.Run 
+
+	Dim oAD41 As STASANN.SANNDataSelection
+	Set oAD41 = newanalysis11.Dialog
+	oAD41.Variables = "11 | 1-7 9-10"
+	oAD41.CasewiseDeletionOfMD = True
+	oAD41.UseRandomSampling = True
+	oAD41.SizeOfTrainingSample = 70
+	oAD41.SizeOfTestSample = 15
+	oAD41.SizeOfValidationSample = 15
+	oAD41.SamplingSeed = 1000
+	oAD41.UseRandomSubsampling = True
+	oAD41.SizeOfTrainingSubsample = 70
+	oAD41.SizeOfTestSubsample = 15
+	oAD41.SizeOfValidationSubsample = 15
+	oAD41.NumberOfSubsamples = 2
+	oAD41.SubsamplingSeed = 1000
+	oAD41.AutomaticNetworkSearch = True
+	oAD41.TrainSample = "off"
+	oAD41.TestSample = "off"
+	oAD41.ValidationSample = "off"
+
+	newanalysis11.Run 
+
+	Dim oAD42 As STASANN.SANNAutomaticNetworkSearch
+	Set oAD42 = newanalysis11.Dialog
+	oAD42.UseMLPNetwork = True
+	oAD42.UseRBFNetwork = True
+	oAD42.UseSOSError = True
+	oAD42.UseEntropyError = True
+	oAD42.IdentityHiddenActivationFunction = True
+	oAD42.SigmoidHiddenActivationFunction = True
+	oAD42.TanhHiddenActivationFunction = True
+	oAD42.ExpHiddenActivationFunction = True
+	oAD42.SineHiddenActivationFunction = False
+	oAD42.IdentityOutputActivationFunction = True
+	oAD42.SigmoidOutputActivationFunction = True
+	oAD42.TanhOutputActivationFunction = True
+	oAD42.ExpOutputActivationFunction = True
+	oAD42.SineOutputActivationFunction = False
+	oAD42.MinimumNumberOfHiddenUnits = 4
+	oAD42.MaximumNumberOfHiddenUnits = 13
+	oAD42.MinimumNumberOfHiddenUnitsRBF = 14
+	oAD42.MaximumNumberOfHiddenUnitsRBF = 19
+	oAD42.UseHiddenWeightDecay = False
+	oAD42.UseOutputWeightDecay = False
+	oAD42.NumberOfNetworksToTrain = 10
+	oAD42.NumberOfNetworksToRetain = 5
+	oAD42.UseFixedSeedForNetworkInitialization = False
+
+	newanalysis11.Run 
+
+	Dim oAD43 As STASANN.SANNResults
+	Set oAD43 = newanalysis11.Dialog
+	oAD43.ActivateModels = "1-5 "
+	oAD43.ModelListView = "1 2 3 4 5 "
+	oAD43.UseTrainingSample = True
+	oAD43.UseTestSample = False
+	oAD43.UseValidationSample = False
+	oAD43.StandaloneNetworks = True
+	oAD43.IncludeInputs = False
+	oAD43.IncludeTargets = True
+	oAD43.IncludePredictions = True
+	oAD43.IncludeErrorbars = False
+	oAD43.IncludeResiduals = False
+	oAD43.IncludeOtherVariables = False
+	oAD43.SelectedItemX = "1"
+	oAD43.SelectedItemY = "2"
+	oAD43.SelectedItemZ = "none"
+	oAD43.IncludeCaseNames = False
+	oAD43.GainLiftchart = True
+	oAD43.SelectCategory = "1"
+	oAD43.CumulativeLiftchart = False
+	oAD43.NumberOfCustomPredictions = 1
+	oAD43.ClearCustomPredictions = False
+
+	Set oStaDocs11 = oAD43.SummaryOfNetworks
+	Set AO = newanalysis11.RouteOutput(oStaDocs11)
+	AO.Visible = True
+	If AO.HasWorkbook Then
+		Set AWB = AO.Workbook
+	Else
+		Set AWB = Nothing
+	End If
+	Set oStaDocs11 = Nothing
+
+	Dim newanalysis12 As Analysis
+	Set newanalysis12 = Analysis (scSANN, S1)
+	Dim oStaDocs12 As StaDocuments
+
+	Dim oAD44 As STASANN.SANNAnalysisType
+	Set oAD44 = newanalysis12.Dialog
+	oAD44.NewAnalysis = True
+	oAD44.TypeOfAnalysis = scSANNClassification
+
+	newanalysis12.Run 
+
+	Dim oAD45 As STASANN.SANNDataSelection
+	Set oAD45 = newanalysis12.Dialog
+	oAD45.Variables = "11 | 1-8 10"
+	oAD45.CasewiseDeletionOfMD = True
+	oAD45.UseRandomSampling = True
+	oAD45.SizeOfTrainingSample = 70
+	oAD45.SizeOfTestSample = 15
+	oAD45.SizeOfValidationSample = 15
+	oAD45.SamplingSeed = 1000
+	oAD45.UseRandomSubsampling = True
+	oAD45.SizeOfTrainingSubsample = 70
+	oAD45.SizeOfTestSubsample = 15
+	oAD45.SizeOfValidationSubsample = 15
+	oAD45.NumberOfSubsamples = 2
+	oAD45.SubsamplingSeed = 1000
+	oAD45.AutomaticNetworkSearch = True
+	oAD45.TrainSample = "off"
+	oAD45.TestSample = "off"
+	oAD45.ValidationSample = "off"
+
+	newanalysis12.Run 
+
+	Dim oAD46 As STASANN.SANNAutomaticNetworkSearch
+	Set oAD46 = newanalysis12.Dialog
+	oAD46.UseMLPNetwork = True
+	oAD46.UseRBFNetwork = True
+	oAD46.UseSOSError = True
+	oAD46.UseEntropyError = True
+	oAD46.IdentityHiddenActivationFunction = True
+	oAD46.SigmoidHiddenActivationFunction = True
+	oAD46.TanhHiddenActivationFunction = True
+	oAD46.ExpHiddenActivationFunction = True
+	oAD46.SineHiddenActivationFunction = False
+	oAD46.IdentityOutputActivationFunction = True
+	oAD46.SigmoidOutputActivationFunction = True
+	oAD46.TanhOutputActivationFunction = True
+	oAD46.ExpOutputActivationFunction = True
+	oAD46.SineOutputActivationFunction = False
+	oAD46.MinimumNumberOfHiddenUnits = 4
+	oAD46.MaximumNumberOfHiddenUnits = 13
+	oAD46.MinimumNumberOfHiddenUnitsRBF = 14
+	oAD46.MaximumNumberOfHiddenUnitsRBF = 19
+	oAD46.UseHiddenWeightDecay = False
+	oAD46.UseOutputWeightDecay = False
+	oAD46.NumberOfNetworksToTrain = 10
+	oAD46.NumberOfNetworksToRetain = 5
+	oAD46.UseFixedSeedForNetworkInitialization = False
+
+	newanalysis12.Run 
+
+	Dim oAD47 As STASANN.SANNResults
+	Set oAD47 = newanalysis12.Dialog
+	oAD47.ActivateModels = "1-5 "
+	oAD47.ModelListView = "1 2 3 4 5 "
+	oAD47.UseTrainingSample = True
+	oAD47.UseTestSample = False
+	oAD47.UseValidationSample = False
+	oAD47.StandaloneNetworks = True
+	oAD47.IncludeInputs = False
+	oAD47.IncludeTargets = True
+	oAD47.IncludePredictions = True
+	oAD47.IncludeErrorbars = False
+	oAD47.IncludeResiduals = False
+	oAD47.IncludeOtherVariables = False
+	oAD47.SelectedItemX = "1"
+	oAD47.SelectedItemY = "2"
+	oAD47.SelectedItemZ = "none"
+	oAD47.IncludeCaseNames = False
+	oAD47.GainLiftchart = True
+	oAD47.SelectCategory = "1"
+	oAD47.CumulativeLiftchart = False
+	oAD47.NumberOfCustomPredictions = 1
+	oAD47.ClearCustomPredictions = False
+
+	Set oStaDocs12 = oAD47.SummaryOfNetworks
+	Set AO = newanalysis12.RouteOutput(oStaDocs12)
+	AO.Visible = True
+	If AO.HasWorkbook Then
+		Set AWB = AO.Workbook
+	Else
+		Set AWB = Nothing
+	End If
+	Set oStaDocs12 = Nothing
+
+	Dim newanalysis13 As Analysis
+	Set newanalysis13 = Analysis (scSANN, S1)
+	Dim oStaDocs13 As StaDocuments
+
+	Dim oAD48 As STASANN.SANNAnalysisType
+	Set oAD48 = newanalysis13.Dialog
+	oAD48.NewAnalysis = True
+	oAD48.TypeOfAnalysis = scSANNClassification
+
+	newanalysis13.Run 
+
+	Dim oAD49 As STASANN.SANNDataSelection
+	Set oAD49 = newanalysis13.Dialog
+	oAD49.Variables = "11 | 1-9"
+	oAD49.CasewiseDeletionOfMD = True
+	oAD49.UseRandomSampling = True
+	oAD49.SizeOfTrainingSample = 70
+	oAD49.SizeOfTestSample = 15
+	oAD49.SizeOfValidationSample = 15
+	oAD49.SamplingSeed = 1000
+	oAD49.UseRandomSubsampling = True
+	oAD49.SizeOfTrainingSubsample = 70
+	oAD49.SizeOfTestSubsample = 15
+	oAD49.SizeOfValidationSubsample = 15
+	oAD49.NumberOfSubsamples = 2
+	oAD49.SubsamplingSeed = 1000
+	oAD49.AutomaticNetworkSearch = True
+	oAD49.TrainSample = "off"
+	oAD49.TestSample = "off"
+	oAD49.ValidationSample = "off"
+
+	newanalysis13.Run 
+
+	Dim oAD50 As STASANN.SANNAutomaticNetworkSearch
+	Set oAD50 = newanalysis13.Dialog
+	oAD50.UseMLPNetwork = True
+	oAD50.UseRBFNetwork = True
+	oAD50.UseSOSError = True
+	oAD50.UseEntropyError = True
+	oAD50.IdentityHiddenActivationFunction = True
+	oAD50.SigmoidHiddenActivationFunction = True
+	oAD50.TanhHiddenActivationFunction = True
+	oAD50.ExpHiddenActivationFunction = True
+	oAD50.SineHiddenActivationFunction = False
+	oAD50.IdentityOutputActivationFunction = True
+	oAD50.SigmoidOutputActivationFunction = True
+	oAD50.TanhOutputActivationFunction = True
+	oAD50.ExpOutputActivationFunction = True
+	oAD50.SineOutputActivationFunction = False
+	oAD50.MinimumNumberOfHiddenUnits = 4
+	oAD50.MaximumNumberOfHiddenUnits = 13
+	oAD50.MinimumNumberOfHiddenUnitsRBF = 14
+	oAD50.MaximumNumberOfHiddenUnitsRBF = 19
+	oAD50.UseHiddenWeightDecay = False
+	oAD50.UseOutputWeightDecay = False
+	oAD50.NumberOfNetworksToTrain = 10
+	oAD50.NumberOfNetworksToRetain = 5
+	oAD50.UseFixedSeedForNetworkInitialization = False
+
+	newanalysis13.Run 
+
+	Dim oAD51 As STASANN.SANNResults
+	Set oAD51 = newanalysis13.Dialog
+	oAD51.ActivateModels = "1-5 "
+	oAD51.ModelListView = "1 2 3 4 5 "
+	oAD51.UseTrainingSample = True
+	oAD51.UseTestSample = False
+	oAD51.UseValidationSample = False
+	oAD51.StandaloneNetworks = True
+	oAD51.IncludeInputs = False
+	oAD51.IncludeTargets = True
+	oAD51.IncludePredictions = True
+	oAD51.IncludeErrorbars = False
+	oAD51.IncludeResiduals = False
+	oAD51.IncludeOtherVariables = False
+	oAD51.SelectedItemX = "1"
+	oAD51.SelectedItemY = "2"
+	oAD51.SelectedItemZ = "none"
+	oAD51.IncludeCaseNames = False
+	oAD51.GainLiftchart = True
+	oAD51.SelectCategory = "1"
+	oAD51.CumulativeLiftchart = False
+	oAD51.NumberOfCustomPredictions = 1
+	oAD51.ClearCustomPredictions = False
+
+	Set oStaDocs13 = oAD51.SummaryOfNetworks
+	Set AO = newanalysis13.RouteOutput(oStaDocs13)
+	AO.Visible = True
+	If AO.HasWorkbook Then
+		Set AWB = AO.Workbook
+	Else
+		Set AWB = Nothing
+	End If
+	Set oStaDocs13 = Nothing
+
+
+
+
+
+
+
+
+
+
+
+
+End Sub
+
+'STATISTICA MACRO FILE VERSION 4
+'BEGINPROPERTIES
+'NAME=RGR Macros
+'DESCRIPTION=Макрос записан 6/12/2024
+'LANGUAGE=0
+'SCRIPTING=0
+'ENDPROPERTIES
